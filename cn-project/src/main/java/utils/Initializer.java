@@ -36,7 +36,7 @@ public class Initializer {
         costList = getCost(line);
         destinationList = getDestinations(routersCount);
         Map<String, Map<String, Double>> routingTable = initRoutingTable();
-        routerList.add(new Router(label, neighborsList,costList , getDestinations(routersCount), routingTable));
+        routerList.add(new Router(label, neighborsList,costList , getDestinations(routersCount), routingTable, null));
     }
 
     private static Map<String, Map<String, Double>> initRoutingTable() {

@@ -2,10 +2,7 @@ package utils;
 
 import model.Router;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -53,19 +50,23 @@ public class RoutingAlgorithm {
     private static void updateRoutingTable(int source, Router router, int n, int[] touch, double[] pathCost) {
 
         Map<String, Map<String, Double>> routingTable = router.getRoutingTable();
+        List<String> shortestPath = new ArrayList<>();
         int counter = 0;
 
-        IntStream.rangeClosed(1, n).forEach(i -> updateCostAndNeighbour(source, n, touch, pathCost, routingTable, counter, i));
+        IntStream.rangeClosed(1, n).forEach(i -> updateCostAndNeighbour(source, n, touch, pathCost, routingTable, counter, i, shortestPath));
         router.setRoutingTable(routingTable);
+        router.setPath(shortestPath);
     }
 
-    private static void updateCostAndNeighbour(int source, int n, int[] touch, double[] pathCost, Map<String, Map<String, Double>> routingTable, int counter, int i) {
+    private static void updateCostAndNeighbour(int source, int n, int[] touch, double[] pathCost, Map<String, Map<String, Double>> routingTable,
+                                               int counter, int i, List<String> shortestPath) {
 
         String[] path = new String[n];
         getShortestPath(source, i, touch, path, counter);
         System.out.println();
 
         String pathString = Arrays.stream(path).filter(Objects::nonNull).collect(Collectors.joining("->"));
+        shortestPath.add(pathString);
         System.out.print("R" + source + " to R" + i + " (cost " + pathCost[i] + "):  "+pathString);
 
         Map<String, Double> newMap = getNeighbourAndCost(pathCost, i, path);

@@ -10,14 +10,16 @@ public class Router {
     private List<Double> cost;
     private List<String> destinations;
     private Map<String, Map<String, Double>> routingTable; //Map<destinations, Map<neighbor, shortestPathCost>>
+    private List<String> path;
 
-    public Router(String label, List<String> neighbors, List<Double> cost, List<String> destinations, Map<String, Map<String, Double>> routingTable) {
+    public Router(String label, List<String> neighbors, List<Double> cost, List<String> destinations, Map<String, Map<String, Double>> routingTable, List<String> path) {
 
         this.label = label;
         this.neighbors = neighbors;
         this.cost = cost;
         this.destinations = destinations;
         this.routingTable = routingTable;
+        this.path = path;
     }
 
     public String getLabel() {
@@ -44,4 +46,11 @@ public class Router {
         this.routingTable = routingTable;
     }
 
+    public List<String> getPath() {
+        return path;
+    }
+
+    public void setPath(List<String> path) {
+        this.path = path;
+    }
 }

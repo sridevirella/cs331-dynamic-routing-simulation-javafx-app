@@ -23,7 +23,7 @@ public class MainEngine extends Application {
 
         Scene scene = new Scene(views.getBorderPane(), 800, 600);
         stage.setScene(scene);
-        stage.setTitle("Link State Protocol Simulation");
+        stage.setTitle("Dynamic Routing Simulation");
         stage.show();
     }
 }

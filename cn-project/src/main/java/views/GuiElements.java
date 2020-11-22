@@ -70,14 +70,14 @@ public class GuiElements {
     private void neighboursCBProperties() {
 
         neighboursCB = new ComboBox<>();
-        neighboursCB.setPromptText("---Select a Neighbour---");
+        neighboursCB.setPromptText("--Select a Neighbour--");
         neighboursCB.setVisible(true);
     }
 
     private void changeCostCBProperties() {
 
         changeCostCB = new ComboBox<>();
-        changeCostCB.setPromptText("---Select a Router---");
+        changeCostCB.setPromptText("----Select a Router----");
     }
 
     private void routerNameCBProperties() {
@@ -91,7 +91,9 @@ public class GuiElements {
         selectionLabel = new Label("No file Selected");
         selectionLabel.setPadding(new Insets(5,10,0,10));
         textArea = new TextArea();
+
         textField = new TextField();
+        textField.setMaxWidth(160.0);
     }
 
     private void initAndAddNodes() {
@@ -106,9 +108,14 @@ public class GuiElements {
         changeCostVBox.setPadding(new Insets(60,10,0,10));
         changeCostVBox.setSpacing(20);
 
+        Label comboBoxLabel = new Label("Display Routing Table");
+        comboBoxLabel.setStyle("-fx-font-weight: bold");
+        comboBoxLabel.setPadding(new Insets(0, 0, 0 ,150));
+
         HBox routerSelectionHBox = new HBox();
-        routerSelectionHBox.getChildren().add(routerNamesCB);
+        routerSelectionHBox.getChildren().addAll(comboBoxLabel, routerNamesCB);
         routerSelectionHBox.setPadding(new Insets(20, 20, 20 ,20));
+        routerSelectionHBox.setSpacing(10);
         routerSelectionHBox.setAlignment(Pos.CENTER);
 
         addNodesToMainVBox(FileSelectionHBox, changeCostVBox, routerSelectionHBox);
@@ -212,15 +219,6 @@ public class GuiElements {
             new RouterHandler(routerList.get(getRouterIndex())).changeCost(getNeighbourIndex(), Double.parseDouble(textField.getText()));
             routingTableDataMap = routerList.stream().collect(Collectors.toMap(Router::getLabel, RouterHandler::displayTable));
         });
-
-//        changeCostButton.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent event) {
-//
-//                new RouterHandler(routerList.get(getRouterIndex())).changeCost(getNeighbourIndex(), Double.parseDouble(textField.getText()));
-//                routingTableDataMap = routerList.stream().collect(Collectors.toMap(Router::getLabel, RouterHandler::displayTable));
-//            }
-//        });
     }
 
     private void neighbourCBListener() {

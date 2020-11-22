@@ -61,11 +61,16 @@ public class RouterHandler {
         Map<String, Map<String, Double>> routingTable = router.getRoutingTable();
         StringBuilder routingTableData = new StringBuilder();
         routingTableData.append("\n").append(router.getLabel())
-                                     .append(" Routing table\n=========================================")
-                                     .append("\nDestinations" +"\t\t"+"Neighbour"+"\t\t"+"Cost\n\n");
+                .append(" Routing table\n=========================================")
+                .append("\nDestinations" +"\t\t"+"Neighbour"+"\t\t"+"Cost"+"\t\t\t"+"Path\n\n");
 
         StringBuilder mapData = new StringBuilder();
-        routingTable.forEach((key1, value1) -> value1.forEach((key, value) -> mapData.append(key1).append("\t\t\t\t").append(key).append("\t\t\t\t").append(value).append("\n")));
+        AtomicInteger counter = new AtomicInteger(1);
+        routingTable.forEach((key1, value1) -> value1.forEach((key, value) -> mapData.append(key1).append("\t\t\t\t")
+                                                                                      .append(key).append("\t\t\t\t")
+                                                                                      .append(value).append("\t\t")
+                                                                                      .append(router.getPath().get(counter.getAndIncrement()))
+                                                                                      .append("\n")));
         routingTableData.append(mapData);
         return routingTableData;
     }
