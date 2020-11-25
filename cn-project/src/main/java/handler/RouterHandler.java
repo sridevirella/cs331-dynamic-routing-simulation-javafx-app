@@ -69,7 +69,8 @@ public class RouterHandler {
         routingTable.forEach((key1, value1) -> value1.forEach((key, value) -> mapData.append(key1).append("\t\t\t\t")
                                                                                       .append(key).append("\t\t\t\t")
                                                                                       .append(value).append("\t\t")
-                                                                                      .append(router.getPath().get(counter.getAndIncrement()))
+                                                                                      .append((router.getPath() != null ? router.getPath().get(counter.getAndIncrement()) : ""))
+                                                                                     // .append(router.getPath().get(counter.getAndIncrement()) )
                                                                                       .append("\n")));
         routingTableData.append(mapData);
         return routingTableData;

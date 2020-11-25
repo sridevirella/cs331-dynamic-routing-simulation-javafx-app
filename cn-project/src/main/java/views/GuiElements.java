@@ -8,6 +8,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -29,16 +31,11 @@ public class GuiElements {
 
     private BorderPane borderPane;
 
-    private static Button selectButton;
-    private static Button changeCostButton;
+    private static Button selectButton, buildButton, changeCostButton;
     private static Label selectionLabel;
-    private static VBox mainVBox;
     private static TextArea textArea;
-    private static ComboBox<String> routerNamesCB;
-    private static ComboBox<String> changeCostCB;
-    private static ComboBox<String> neighboursCB;
-    private static int neighbourIndex;
-    private static int routerIndex;
+    private static ComboBox<String> routerNamesCB, changeCostCB, neighboursCB;
+    private static int neighbourIndex, routerIndex;
     private static TextField textField;
     private static Map<String, StringBuilder> routingTableDataMap;
 
@@ -55,7 +52,14 @@ public class GuiElements {
         selectButton = new Button("Select a File");
         selectButton.setPadding(new Insets(5,10,5,10));
         setListener(stage);
+
+        buildButton = new Button("Run Build");
+        buildButton.setEffect(new DropShadow());
+        buildButton.setStyle("-fx-background-insets: 0 0 -1 0, 0, 1, 2; -fx-background-color: #6495ED");
+        buildButton.setMinWidth(100);
+
         changeCostButton = new Button("Change Cost");
+        changeCostButton.setEffect(new DropShadow());
         changeCostButton.setStyle("-fx-background-insets: 0 0 -1 0, 0, 1, 2; -fx-background-color: #6495ED");
     }
 
@@ -99,26 +103,39 @@ public class GuiElements {
     private void initAndAddNodes() {
 
         HBox FileSelectionHBox = getFileSelectionHBox();
-
         Label changeCostLabel = getChangeCostLabel();
         Label costFieldLabel = getCostLabel();
+        VBox changeCostVBox = getChangeCostVBox(changeCostLabel, costFieldLabel);
+        Label comboBoxLabel = getComboBoxLabel();
+        HBox routerSelectionHBox = getSelectionHBox(comboBoxLabel);
+        addNodesToMainVBox(FileSelectionHBox, changeCostVBox, routerSelectionHBox);
+    }
 
-        VBox changeCostVBox = new VBox();
-        changeCostVBox.getChildren().addAll(changeCostLabel, changeCostCB, neighboursCB, costFieldLabel, textField, changeCostButton);
-        changeCostVBox.setPadding(new Insets(60,10,0,10));
-        changeCostVBox.setSpacing(20);
-
-        Label comboBoxLabel = new Label("Display Routing Table");
-        comboBoxLabel.setStyle("-fx-font-weight: bold");
-        comboBoxLabel.setPadding(new Insets(0, 0, 0 ,150));
+    private HBox getSelectionHBox(Label comboBoxLabel) {
 
         HBox routerSelectionHBox = new HBox();
         routerSelectionHBox.getChildren().addAll(comboBoxLabel, routerNamesCB);
         routerSelectionHBox.setPadding(new Insets(20, 20, 20 ,20));
         routerSelectionHBox.setSpacing(10);
         routerSelectionHBox.setAlignment(Pos.CENTER);
+        return routerSelectionHBox;
+    }
 
-        addNodesToMainVBox(FileSelectionHBox, changeCostVBox, routerSelectionHBox);
+    private Label getComboBoxLabel() {
+
+        Label comboBoxLabel = new Label("Display Routing Table");
+        comboBoxLabel.setStyle("-fx-font-weight: bold");
+        comboBoxLabel.setPadding(new Insets(0, 0, 0 ,150));
+        return comboBoxLabel;
+    }
+
+    private VBox getChangeCostVBox(Label changeCostLabel, Label costFieldLabel) {
+
+        VBox changeCostVBox = new VBox();
+        changeCostVBox.getChildren().addAll(changeCostLabel, changeCostCB, neighboursCB, costFieldLabel, textField, changeCostButton);
+        changeCostVBox.setPadding(new Insets(60,10,0,10));
+        changeCostVBox.setSpacing(20);
+        return changeCostVBox;
     }
 
     private Label getCostLabel() {
@@ -129,7 +146,7 @@ public class GuiElements {
     private Label getChangeCostLabel() {
 
         Label changeCostLabel = new Label("Change Cost");
-        changeCostLabel.setStyle("-fx-font-weight: bold");
+        changeCostLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14");
         return changeCostLabel;
     }
 
@@ -143,10 +160,14 @@ public class GuiElements {
 
     private void addNodesToMainVBox(HBox fileSelectionHBox, VBox changeCostVBox, HBox routerSelectionHBox) {
 
-        mainVBox = new VBox();
-        mainVBox.getChildren().addAll(fileSelectionHBox, changeCostVBox);
-        mainVBox.setPadding(new Insets(20,20,20,20));
-        mainVBox.setStyle("-fx-border-color: black; -fx-border-insets: 5; -fx-border-width: 3; -fx-border-style: solid;" );
+        VBox mainVBox = mainVBoxProperties(fileSelectionHBox, changeCostVBox);
+        VBox textAreaVbox = getTextAreaVBox();
+        borderPane.setLeft(mainVBox);
+        borderPane.setTop(routerSelectionHBox);
+        borderPane.setCenter(textAreaVbox);
+    }
+
+    private VBox getTextAreaVBox() {
 
         VBox textAreaVbox = new VBox();
         textAreaVbox.setPadding(new Insets(10, 20, 60, 20));
@@ -154,10 +175,25 @@ public class GuiElements {
         double prefWidth = 1.0;
         double prefHeight = 500.0;
         textArea.setPrefSize(prefWidth, prefHeight);
+        return textAreaVbox;
+    }
 
-        borderPane.setLeft(mainVBox);
-        borderPane.setTop(routerSelectionHBox);
-        borderPane.setCenter(textAreaVbox);
+    private VBox mainVBoxProperties(HBox fileSelectionHBox, VBox changeCostVBox) {
+
+        VBox mainVBox = new VBox();
+        mainVBox.getChildren().addAll(fileSelectionHBox, buildButtonHBox(), changeCostVBox);
+        mainVBox.setPadding(new Insets(20,20,20,20));
+        mainVBox.setStyle("-fx-border-color: black; -fx-border-insets: 5; " +
+                          "-fx-border-width: 3; -fx-border-style: solid; -fx-font-size: 14" );
+        return mainVBox;
+    }
+
+    private HBox buildButtonHBox() {
+
+        HBox buildButtonHBox = new HBox();
+        buildButtonHBox.setPadding(new Insets(10,0,10,20));
+        buildButtonHBox.getChildren().add(buildButton);
+        return buildButtonHBox;
     }
 
     private void setListener(Stage stage) {
@@ -178,11 +214,10 @@ public class GuiElements {
     private void getFileFromUser(Stage stage) throws IOException {
 
         FileChooser fileChooser = getFileChooser();
-
         File file = fileChooser.showOpenDialog(stage);
+
         if (file != null)
             selectionLabel.setText(file.getName() + "  selected");
-
         FileReadWrite.createFile(file.getPath(), file.getName());
         initSimulator(file.getName());
     }
@@ -200,8 +235,16 @@ public class GuiElements {
 
         List<Router> routerList = Initializer.getRoutersList(fileName);
         RouterHandler.setRoutersCount(routerList.size());
-        routerList.forEach( router -> { new RouterHandler(router).builder(); });
-        handleSelections(routerList);
+        initialSelection(routerList);
+        buildButtonListener(routerList);
+    }
+
+    private void buildButtonListener(List<Router> routerList) {
+
+        buildButton.setOnMouseClicked(event -> {
+            routerList.forEach( router -> { new RouterHandler(router).builder(); });
+            handleSelections(routerList);
+        });
     }
 
     private void handleSelections(List<Router> routerList) {
@@ -255,6 +298,7 @@ public class GuiElements {
     private void initialSelection(List<Router> routerList) {
 
         routingTableDataMap = routerList.stream().collect(Collectors.toMap(Router::getLabel, RouterHandler::displayTable));
+        routerNamesCB.getItems().clear();
         routerNamesCB.getItems().addAll(FXCollections.observableArrayList( routingTableDataMap.keySet()).sorted(
                 ((o1, o2) -> Integer.compare(Integer.parseInt(o1.substring(1)), Integer.parseInt(o2.substring(1))) )
         ));
