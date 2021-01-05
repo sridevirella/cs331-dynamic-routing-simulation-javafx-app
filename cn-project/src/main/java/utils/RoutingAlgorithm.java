@@ -3,7 +3,6 @@ package utils;
 import model.Router;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -50,7 +49,8 @@ public class RoutingAlgorithm {
     private static void updateRoutingTable(int source, Router router, int n, int[] touch, double[] pathCost) {
 
         Map<String, Map<String, Double>> routingTable = router.getRoutingTable();
-        List<String> shortestPath = new ArrayList<>();
+        List<String> shortestPath = new ArrayList<>(n);
+        IntStream.rangeClosed(1, n).forEach( index -> shortestPath.add("-1.0"));
         int counter = 0;
 
         IntStream.rangeClosed(1, n).forEach(i -> updateCostAndNeighbour(source, n, touch, pathCost, routingTable, counter, i, shortestPath));
@@ -66,7 +66,7 @@ public class RoutingAlgorithm {
         System.out.println();
 
         String pathString = Arrays.stream(path).filter(Objects::nonNull).collect(Collectors.joining("->"));
-        shortestPath.add(pathString);
+        shortestPath.add(i, pathString);
         System.out.print("R" + source + " to R" + i + " (cost " + pathCost[i] + "):  "+pathString);
 
         Map<String, Double> newMap = getNeighbourAndCost(pathCost, i, path);
